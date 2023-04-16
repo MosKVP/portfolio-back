@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from funds.models import SearchResponse, NavResponse
+from fastapi_cache.decorator import cache
+
 import httpx
 
 router = APIRouter(prefix="/funds")
@@ -24,6 +26,7 @@ async def search(q: str, size: int):
 
 # TODO: should get only one day, but there's no api for that
 @router.get("/{id}/nav")
+@cache(expire=1*60*60)  # 1 hour
 async def nav(id: str):
     url = f"{base}/fund/v2/public/funds/{id}/nav/q"
     params = {
